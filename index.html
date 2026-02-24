@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>银发匠心 - 首页</title>
+    <style>
+        :root {
+            --primary-color: #E67E22;
+            --secondary-color: #8FBC8F;
+            --accent-color: #A8D8C9;
+            --bg-color: #FDF8F3;
+            --card-bg: #FFFFFF;
+            --text-color: #5D4E37;
+            --light-bg: #F5E6D3;
+            --border-radius: 16px;
+            --shadow: 0 10px 20px rgba(93, 78, 55, 0.08);
+            --transition: all 0.3s ease;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-color); font-size: 16px; overflow-x: hidden; line-height: 1.6; }
+        a { text-decoration: none; color: inherit; }
+
+        /* --- 顶部导航 --- */
+        header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 15px 5%; background: var(--card-bg); 
+            box-shadow: 0 2px 10px rgba(93, 78, 55, 0.05);
+            position: sticky; top: 0; z-index: 100;
+            height: 70px; border-bottom: 3px solid var(--light-bg);
+        }
+        .logo { font-size: 1.8rem; font-weight: bold; color: var(--primary-color); cursor: pointer; }
+        .nav-links { display: flex; gap: 30px; font-weight: 500; }
+        .nav-links a:hover { color: var(--primary-color); }
+        .header-actions { display: flex; align-items: center; gap: 15px; }
+        
+        .role-switch-container { position: relative; margin-right: 15px; }
+        .role-display {
+            display: flex; align-items: center; gap: 8px;
+            padding: 8px 15px; background: var(--light-bg); border-radius: 25px;
+            cursor: pointer; border: 2px solid #E0D5C5;
+        }
+        .role-display:hover { background: #EBDCC8; border-color: var(--primary-color); }
+        .role-menu {
+            position: absolute; top: 100%; right: 0; margin-top: 10px;
+            background: var(--card-bg); border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(93, 78, 55, 0.15);
+            min-width: 200px; opacity: 0; visibility: hidden;
+            transform: translateY(-10px); transition: all 0.3s ease;
+            z-index: 1000; border: 1px solid var(--light-bg);
+        }
+        .role-menu.show { opacity: 1; visibility: visible; transform: translateY(0); }
+        .role-item { padding: 12px 20px; cursor: pointer; border-bottom: 1px solid #F0E6D5; }
+        .role-item:last-child { border-bottom: none; }
+        .role-item:hover { background: #FFF8F0; }
+
+        .enter-btn {
+            background: var(--primary-color); color: white; padding: 10px 25px; 
+            border-radius: 30px; font-weight: bold; cursor: pointer;
+            box-shadow: 0 4px 10px rgba(230, 126, 34, 0.4);
+        }
+        .enter-btn:hover { transform: scale(1.05); }
+
+        /* --- 海报区域 --- */
+        .hero-banner {
+            width: 100%; height: 85vh;
+            background: linear-gradient(135deg, #E8F5E9 0%, #F1F8E9 50%, #FFF8E1 100%);
+            display: flex; justify-content: center; align-items: center;
+            position: relative; overflow: visible;
+        }
+        .banner-placeholder {
+            text-align: center; 
+            background: linear-gradient(135deg, var(--secondary-color) 0%, #6B9B6B 100%);
+            padding: 60px; border-radius: 25px; max-width: 70%;
+            box-shadow: 0 20px 40px rgba(143, 188, 143, 0.4);
+            border: 3px solid white;
+            z-index: 10;
+        }
+        .banner-placeholder h1 { font-size: 3.5rem; margin-bottom: 20px; color: white; text-shadow: 0 2px 10px rgba(0,0,0,0.2); }
+        .banner-placeholder p { font-size: 1.3rem; color: #F0FFF0; font-weight: 500; }
+
+        /* 🦥 IP 形象样式 - 匠匠 (首页欢迎) */
+        .mascot-jingjing {
+            position: absolute;
+            bottom: -30px;
+            right: 8%;
+            height: 400px;
+            z-index: 20;
+            animation: float 3s ease-in-out infinite;
+            pointer-events: none;
+            filter: drop-shadow(0 10px 15px rgba(93, 78, 55, 0.2));
+            
+        
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        /* --- 平台简介 --- */
+        .intro-section { padding: 80px 5%; text-align: center; background: var(--card-bg); }
+        .intro-title { font-size: 2.5rem; color: var(--secondary-color); margin-bottom: 30px; position: relative; display: inline-block; }
+        .intro-title::after { content: ''; position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%); width: 80px; height: 4px; background: var(--primary-color); border-radius: 2px; }
+        .intro-desc { max-width: 800px; margin: 0 auto 50px; font-size: 1.1rem; color: #8B7355; line-height: 1.8; }
+        .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 40px; max-width: 1000px; margin: 0 auto; }
+        .feature-card { background: var(--bg-color); padding: 40px 30px; border-radius: var(--border-radius); box-shadow: var(--shadow); transition: var(--transition); border: 1px solid #F0E6D5; }
+        .feature-card:hover { transform: translateY(-10px); border-color: var(--secondary-color); }
+        .feature-icon { font-size: 3.5rem; color: var(--primary-color); margin-bottom: 20px; }
+        .feature-card h3 { font-size: 1.4rem; margin-bottom: 15px; color: var(--text-color); }
+        .feature-card p { color: #8B7355; line-height: 1.7; }
+
+        /* --- CTA区域 --- */
+        .cta-section { padding: 80px 5%; text-align: center; background: linear-gradient(135deg, var(--primary-color) 0%, #D35400 100%); color: white; }
+        .cta-content { max-width: 700px; margin: 0 auto; }
+        .cta-content h2 { font-size: 2.5rem; margin-bottom: 20px; }
+        .cta-content p { font-size: 1.2rem; opacity: 0.95; margin-bottom: 30px; }
+        .cta-btn { background: white; color: var(--primary-color); padding: 18px 50px; border-radius: 50px; font-size: 1.2rem; font-weight: bold; cursor: pointer; box-shadow: 0 10px 20px rgba(0,0,0,0.2); transition: transform 0.3s; border: none; }
+        .cta-btn:hover { transform: scale(1.05); }
+
+        /* --- 页脚 --- */
+        footer { background: #5D4E37; color: white; padding: 40px 5%; text-align: center; }
+        .footer-copy { color: #D7CCC8; font-size: 0.9rem; margin-top: 20px; }
+
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .hero-banner { height: 60vh; }
+            .mascot-jingjing { height: 200px; right: 2%; bottom: -10px; }
+            .banner-placeholder { max-width: 90%; padding: 30px; }
+            .banner-placeholder h1 { font-size: 2.5rem; }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <!-- 顶部导航 -->
+    <header>
+        <div class="logo" onclick="window.location.href='index.html'">银发匠心</div>
+        <nav class="nav-links">
+            <a href="#">平台介绍</a>
+            <a href="#features">核心功能</a>
+            <a href="#">团队风采</a>
+        </nav>
+        <div class="header-actions">
+            <div class="role-switch-container">
+                <div class="role-display" onclick="toggleRoleMenu()">
+                    <i class="fas fa-user-circle"></i>
+                    <span id="current-role">👤 游客模式</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="role-menu" id="role-menu">
+                    <div class="role-item" onclick="switchRole('visitor')"><span class="role-icon">👤</span> 游客/消费者</div>
+                    <div class="role-item" onclick="switchRole('creator')"><span class="role-icon">👴</span> 老年创作者</div>
+                    <div class="role-item" onclick="switchRole('volunteer')"><span class="role-icon">❤️</span> 志愿者</div>
+                    <div class="role-item" onclick="switchRole('enterprise')"><span class="role-icon">🏢</span> 企业入驻</div>
+                </div>
+            </div>
+            <div class="enter-btn" onclick="window.location.href='main.html'">进入平台</div>
+        </div>
+    </header>
+
+    <!-- 海报区域 -->
+    <section class="hero-banner">
+        <div class="banner-placeholder">
+            <h1>银发匠心</h1>
+            <p>赋能银发族，智造新未来</p>
+        </div>
+        
+        <!-- 🦥 IP形象：匠匠 (戴眼镜绿围裙) - 首页右下角欢迎 -->
+        <img src="/static/1.png" alt="匠匠" class="mascot-jingjing" onerror="this.style.display='none'">
+    </section>
+
+    <!-- 平台简介 -->
+    <section id="features" class="intro-section">
+        <h2 class="intro-title">关于银发匠心</h2>
+        <p class="intro-desc">"银发匠心"是一个专注于老年人技能价值变现的综合性电商平台。我们通过科技赋能，让每一位长者的智慧与才华都被看见、被珍视。</p>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-cube"></i></div>
+                <h3>元宇宙展厅</h3>
+                <p>3D沉浸式展示老人手工艺品，支持语音讲解。</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-users"></i></div>
+                <h3>社区化服务</h3>
+                <p>连接志愿者与老人，提供健康陪测、情感陪伴。</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>
+                <h3>信誉保障</h3>
+                <p>实名认证、资金托管、作品溯源，安全可信。</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA区域 -->
+    <section class="cta-section">
+        <div class="cta-content">
+            <h2>立即开启您的银发匠心之旅</h2>
+            <p>无论是展示您的精湛技艺，还是为社区贡献一份爱心，这里都有属于您的位置。</p>
+            <button class="cta-btn" onclick="window.location.href='main.html'">探索平台</button>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer>
+        <p>© 2026 银发匠心平台 | </p>
+        <p class="footer-copy">让每一份热爱，都被世界温柔以待 🦥</p>
+    </footer>
+
+    <script>
+        let currentRole = 'visitor';
+        function toggleRoleMenu() {
+            const menu = document.getElementById('role-menu');
+            menu.classList.toggle('show');
+        }
+        function switchRole(role) {
+            const roles = { 'visitor': '👤 游客模式', 'creator': '👴 创作者模式', 'volunteer': '❤️ 志愿者模式', 'enterprise': '🏢 企业模式' };
+            document.getElementById('current-role').innerText = roles[role];
+            document.getElementById('role-menu').classList.remove('show');
+            alert(`已切换至 ${roles[role]}`);
+        }
+        document.addEventListener('click', (e) => {
+            if (!document.querySelector('.role-switch-container').contains(e.target)) {
+                document.getElementById('role-menu')?.classList.remove('show');
+            }
+        });
+    </script>
+</body>
+</html>

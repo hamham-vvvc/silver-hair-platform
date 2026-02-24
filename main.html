@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>银发匠心 - 主平台</title>
+    <style>
+        :root {
+            --primary-color: #E67E22;
+            --secondary-color: #8FBC8F;
+            --accent-color: #A8D8C9;
+            --bg-color: #FDF8F3;
+            --card-bg: #FFFFFF;
+            --text-color: #5D4E37;
+            --light-bg: #F5E6D3;
+            --border-radius: 16px;
+            --shadow: 0 10px 20px rgba(93, 78, 55, 0.08);
+            --transition: all 0.3s ease;
+        }
+
+        body.elderly-mode {
+            --font-size-base: 24px;
+            --primary-color: #D35400;
+            --text-color: #3E2723;
+            --bg-color: #FFF8E1;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif; }
+        html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+        body { background-color: var(--bg-color); color: var(--text-color); font-size: 16px; transition: var(--transition); overflow-x: hidden; line-height: 1.6; }
+        a { text-decoration: none; color: inherit; }
+
+        /* --- 顶部导航 --- */
+        header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 15px 5%; background: var(--card-bg); box-shadow: 0 2px 10px rgba(93, 78, 55, 0.05);
+            position: sticky; top: 0; z-index: 100;
+            height: 70px; border-bottom: 3px solid var(--light-bg);
+        }
+        .logo { font-size: 1.5rem; font-weight: bold; color: var(--primary-color); cursor: pointer; }
+        .nav-links { display: flex; gap: 30px; font-weight: 500; }
+        .nav-links a { position: relative; padding: 5px 0; transition: var(--transition); }
+        .nav-links a:hover { color: var(--primary-color); }
+        .nav-links a::after { content: ''; position: absolute; bottom: 0; left: 0; width: 0; height: 2px; background: var(--primary-color); transition: width 0.3s ease; }
+        .nav-links a:hover::after { width: 100%; }
+        .nav-links a.active-link { color: var(--primary-color); }
+        .nav-links a.active-link::after { width: 100%; }
+        .header-actions { display: flex; align-items: center; gap: 15px; }
+        
+        .role-switch-container { position: relative; margin-right: 15px; }
+        .role-display {
+            display: flex; align-items: center; gap: 8px;
+            padding: 8px 15px; background: var(--light-bg); border-radius: 25px;
+            cursor: pointer; transition: var(--transition); border: 2px solid #E0D5C5;
+        }
+        .role-display:hover { background: #EBDCC8; border-color: var(--primary-color); }
+        .role-display i:first-child { font-size: 1.2rem; color: var(--secondary-color); }
+        .role-display .fa-chevron-down { font-size: 0.8rem; color: #8B7355; transition: transform 0.3s; }
+        .role-display.active .fa-chevron-down { transform: rotate(180deg); }
+        .role-menu {
+            position: absolute; top: 100%; right: 0; margin-top: 10px;
+            background: var(--card-bg); border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(93, 78, 55, 0.15);
+            min-width: 220px; opacity: 0; visibility: hidden;
+            transform: translateY(-10px); transition: all 0.3s ease;
+            z-index: 1000; overflow: hidden; border: 1px solid var(--light-bg);
+        }
+        .role-menu.show { opacity: 1; visibility: visible; transform: translateY(0); }
+        .role-item {
+            display: flex; flex-direction: column; padding: 15px 20px;
+            cursor: pointer; transition: var(--transition); border-bottom: 1px solid #F0E6D5;
+        }
+        .role-item:last-child { border-bottom: none; }
+        .role-item:hover { background: linear-gradient(135deg, #FFF8F0 0%, #fff 100%); padding-left: 25px; }
+        .role-item.active { background: linear-gradient(135deg, #E8F4FF 0%, #F0F7FF 100%); border-left: 4px solid var(--secondary-color); }
+        .role-icon { font-size: 1.3rem; margin-bottom: 5px; }
+        .role-name { font-weight: 600; color: var(--text-color); font-size: 0.95rem; }
+        .role-desc { font-size: 0.8rem; color: #8B7355; margin-top: 3px; }
+
+        .demo-switch {
+            background: var(--primary-color); color: white; padding: 10px 20px; border-radius: 30px;
+            cursor: pointer; font-weight: bold; display: flex; align-items: center; gap: 8px;
+            box-shadow: 0 4px 10px rgba(230, 126, 34, 0.4); transition: transform 0.2s;
+        }
+        .demo-switch:hover { transform: scale(1.05); }
+
+        /* --- 首屏：元宇宙展厅 --- */
+        #home { scroll-margin-top: 80px; }
+        .hero-section { display: flex; padding: 40px 5%; gap: 40px; min-height: 80vh; align-items: center; position: relative; }
+        .showcase-3d {
+            flex: 1.5; background: linear-gradient(135deg, #E8F5E9 0%, #F1F8E9 100%);
+            border-radius: var(--border-radius); position: relative; overflow: hidden;
+            box-shadow: var(--shadow); display: flex; justify-content: center; align-items: center;
+            min-height: 500px; border: 1px solid #C8E6C9;
+        }
+        .model-placeholder {
+            width: 300px; height: 300px; background: rgba(255,255,255,0.8);
+            border-radius: 50%; display: flex; justify-content: center; align-items: center;
+            animation: float 3s ease-in-out infinite; text-align: center; color: #5D4E37; border: 2px dashed var(--secondary-color);
+        }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
+        .control-panel {
+            flex: 1; background: var(--card-bg); padding: 30px; border-radius: var(--border-radius);
+            box-shadow: var(--shadow); position: relative; border: 1px solid #F0E6D5;
+        }
+        
+        /* 🦥 IP 形象样式 - 悠悠 (主功能页产品推荐) */
+        .mascot-youyou {
+            position: absolute;
+            top: 60px;
+            right: 2px;
+            height: 240px;
+            z-index: 30;
+            animation: peek 3s ease-in-out infinite;
+            pointer-events: none;
+            filter: drop-shadow(0 10px 15px rgba(93, 78, 55, 0.2));
+        }
+        @keyframes peek {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            50% { transform: translate(-5px, -8px) rotate(3deg); }
+        }
+
+        .product-info h2 { font-size: 1.8rem; margin-bottom: 10px; color: var(--text-color); }
+        .price-tag { color: var(--primary-color); font-size: 1.5rem; font-weight: bold; margin: 15px 0; display: block;}
+        .ai-estimate { font-size: 0.9rem; color: #5D4E37; background: #F5E6D3; padding: 6px 12px; border-radius: 6px; display: inline-block; border-left: 4px solid var(--secondary-color); transition: all 0.3s; }
+        .trust-badges { background: #F1F8E9; padding: 15px; border-radius: 10px; margin: 20px 0; border: 1px solid #C8E6C9; font-size: 0.95rem; }
+        .trust-badges strong { color: var(--secondary-color); display: block; margin-bottom: 8px; }
+        .badge-item { display: inline-block; margin-right: 15px; color: #5D4E37; }
+        .action-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 25px; }
+        .btn {
+            padding: 15px; border: none; border-radius: 12px; font-size: 1rem; cursor: pointer;
+            display: flex; justify-content: center; align-items: center; gap: 10px; 
+            transition: var(--transition); font-weight: 600;
+        }
+        .btn-primary { background: var(--primary-color); color: white; box-shadow: 0 4px 10px rgba(230, 126, 34, 0.3); }
+        .btn-secondary { background: var(--light-bg); color: var(--text-color); }
+        .btn:hover { transform: translateY(-3px); filter: brightness(1.05); }
+        .btn-sm { padding: 8px 15px; font-size: 0.9rem; }
+
+        /* --- 作品集板块 --- */
+        #portfolio { scroll-margin-top: 80px; }
+        .portfolio-section { padding: 60px 5%; background: var(--card-bg); }
+        .section-header { display: flex; justify-content: space-between; align-items: end; margin-bottom: 40px; border-bottom: 2px solid var(--light-bg); padding-bottom: 15px; }
+        .section-title-group h2 { font-size: 2rem; color: var(--secondary-color); margin-bottom: 5px; }
+        .section-title-group p { color: #8B7355; font-size: 1rem; }
+        .view-all { color: var(--primary-color); font-weight: bold; display: flex; align-items: center; gap: 5px; cursor: pointer; }
+        .view-all:hover { gap: 10px; transition: var(--transition); }
+        .portfolio-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 30px; }
+        .work-card {
+            background: var(--bg-color); border-radius: var(--border-radius); overflow: hidden;
+            box-shadow: var(--shadow); transition: var(--transition);
+            border: 1px solid #F0E6D5; display: flex; flex-direction: column;
+        }
+        .work-card:hover { transform: translateY(-8px); box-shadow: 0 15px 30px rgba(93, 78, 55, 0.12); }
+        .work-img-box { height: 220px; background: #F5E6D3; position: relative; overflow: hidden; display: flex; justify-content: center; align-items: center; color: #8B7355; }
+        .img-placeholder { width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; background: linear-gradient(45deg, #F5E6D3, #EBDCC8); color: #A8957A; font-size: 3rem; }
+        .work-info { padding: 20px; flex-grow: 1; display: flex; flex-direction: column; }
+        .work-category { font-size: 0.8rem; color: var(--secondary-color); background: #E8F5E9; padding: 4px 8px; border-radius: 4px; display: inline-block; width: fit-content; margin-bottom: 8px; }
+        .work-title { font-size: 1.2rem; font-weight: bold; margin-bottom: 10px; color: var(--text-color); line-height: 1.4; }
+        .author-row { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #F0E6D5; }
+        .author-avatar { width: 35px; height: 35px; border-radius: 50%; background: var(--light-bg); display: flex; justify-content: center; align-items: center; font-size: 0.8rem; color: var(--text-color); }
+        .author-name { font-size: 0.9rem; font-weight: 600; }
+        .author-age { font-size: 0.8rem; color: #8B7355; }
+        .work-footer { margin-top: auto; display: flex; justify-content: space-between; align-items: center; }
+        .work-price { font-size: 1.3rem; font-weight: bold; color: var(--primary-color); }
+        .ai-tag { font-size: 0.75rem; color: #8B7355; background: var(--light-bg); padding: 2px 6px; border-radius: 4px; margin-left: 5px; }
+
+        /* --- 文创衍生产品板块 --- */
+        #merchandise { scroll-margin-top: 80px; }
+        .merchandise-section {
+            padding: 60px 5%;
+            background: linear-gradient(180deg, var(--card-bg) 0%, var(--bg-color) 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        .merchandise-section::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+        }
+        .merch-header { text-align: center; margin-bottom: 40px; }
+        .merch-header h2 { font-size: 2.5rem; color: var(--secondary-color); margin-bottom: 15px; position: relative; display: inline-block; }
+        .merch-header h2::after { content: '🎁'; position: absolute; top: -10px; right: -40px; font-size: 2rem; animation: bounce 2s infinite; }
+        .merch-header p { font-size: 1.1rem; color: #8B7355; max-width: 600px; margin: 0 auto; }
+        .merch-tags { display: flex; justify-content: center; gap: 15px; margin-top: 25px; flex-wrap: wrap; }
+        .merch-tag {
+            background: linear-gradient(135deg, #FFF8F0 0%, #FFE8CC 100%);
+            color: var(--primary-color); padding: 8px 20px; border-radius: 25px;
+            font-size: 0.9rem; font-weight: 600; border: 2px solid var(--primary-color);
+        }
+        .merch-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; max-width: 1200px; margin: 0 auto; }
+        .merch-card {
+            background: var(--card-bg); border-radius: var(--border-radius); overflow: hidden;
+            box-shadow: var(--shadow); transition: var(--transition);
+            border: 1px solid #F0E6D5; position: relative;
+        }
+        .merch-card:hover { transform: translateY(-8px); box-shadow: 0 15px 30px rgba(93, 78, 55, 0.12); }
+        .merch-badge {
+            position: absolute; top: 15px; right: 15px;
+            background: linear-gradient(135deg, #FF6B6B 0%, #EE5A5A 100%);
+            color: white; padding: 6px 15px; border-radius: 20px;
+            font-size: 0.8rem; font-weight: bold; z-index: 10;
+        }
+        .merch-badge.new { background: linear-gradient(135deg, var(--secondary-color) 0%, #6B9B6B 100%); }
+        .merch-badge.hot { background: linear-gradient(135deg, var(--primary-color) 0%, #D35400 100%); }
+        .merch-img-box {
+            height: 200px; background: #FAF5EF; position: relative;
+            overflow: hidden; display: flex; justify-content: center; align-items: center;
+        }
+        .merch-img-box img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
+        .merch-card:hover .merch-img-box img { transform: scale(1.08); }
+        .merch-info { padding: 20px; }
+        .merch-category {
+            font-size: 0.85rem; color: var(--secondary-color); background: #E8F5E9;
+            padding: 5px 12px; border-radius: 6px; display: inline-block;
+            margin-bottom: 10px; font-weight: 600;
+        }
+        .merch-title { font-size: 1.2rem; font-weight: bold; color: var(--text-color); margin-bottom: 8px; line-height: 1.4; }
+        .merch-desc { font-size: 0.9rem; color: #8B7355; margin-bottom: 15px; line-height: 1.6; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .merch-footer { display: flex; justify-content: space-between; align-items: center; padding-top: 15px; border-top: 1px solid #F0E6D5; }
+        .merch-price { font-size: 1.4rem; font-weight: bold; color: var(--primary-color); }
+        .merch-price small { font-size: 0.85rem; color: #A8957A; text-decoration: line-through; margin-left: 8px; }
+        .merch-actions { display: flex; gap: 8px; }
+        .merch-btn {
+            padding: 8px 16px; border: none; border-radius: 20px;
+            font-size: 0.9rem; cursor: pointer; transition: var(--transition);
+            font-weight: 600; display: flex; align-items: center; gap: 5px;
+        }
+        .merch-btn-primary { background: var(--primary-color); color: white; box-shadow: 0 3px 8px rgba(230, 126, 34, 0.3); }
+        .merch-btn-primary:hover { transform: translateY(-2px); box-shadow: 0 5px 12px rgba(230, 126, 34, 0.4); }
+        .merch-btn-secondary { background: var(--light-bg); color: var(--text-color); }
+        .merch-btn-secondary:hover { background: #EBDCC8; }
+        .merch-stats { display: flex; gap: 15px; margin-top: 12px; font-size: 0.8rem; color: #8B7355; }
+        .merch-stat { display: flex; align-items: center; gap: 5px; }
+        .merch-stat i { color: var(--primary-color); }
+
+        /* --- 便民服务矩阵 --- */
+        #services { scroll-margin-top: 80px; }
+        .service-section { padding: 60px 5%; background: var(--bg-color); position: relative; }
+        .section-title-center { text-align: center; margin-bottom: 50px; font-size: 2rem; color: var(--secondary-color); position: relative; }
+        .section-title-center::after { content: ''; display: block; width: 60px; height: 4px; background: var(--primary-color); margin: 10px auto 0; border-radius: 2px; }
+        .service-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
+        .service-card {
+            background: var(--card-bg); padding: 35px 25px; border-radius: var(--border-radius);
+            text-align: center; transition: var(--transition); border: 1px solid #F0E6D5;
+            display: flex; flex-direction: column; justify-content: space-between; height: 100%;
+        }
+        .service-card:hover { transform: translateY(-8px); box-shadow: var(--shadow); border-color: var(--secondary-color); }
+        .service-icon { font-size: 3.5rem; margin-bottom: 20px; display: block; }
+        .service-card h3 { margin-bottom: 15px; font-size: 1.4rem; }
+        .service-desc { color: #8B7355; margin-bottom: 20px; font-size: 0.95rem; }
+        .service-status { font-size: 0.9rem; color: var(--secondary-color); font-weight: bold; background: #E8F5E9; padding: 5px 10px; border-radius: 20px; display: inline-block; margin-bottom: 15px;}
+
+        /* 🦥 IP 形象样式 - 医护树懒 (便民服务守护) */
+        .mascot-nurse {
+            position: absolute;
+            bottom: -30px;
+            right: 1%;
+            height: 280px;
+            z-index: 15;
+            animation: float 3s ease-in-out infinite;
+            pointer-events: none;
+            filter: drop-shadow(0 10px 15px rgba(93, 78, 55, 0.2));
+        }
+
+        /* --- 关于我们 --- */
+        #about { scroll-margin-top: 80px; }
+        .about-section { padding: 60px 5%; background: var(--card-bg); }
+        .about-content { display: flex; gap: 40px; align-items: center; flex-wrap: wrap; }
+        .about-text { flex: 1; min-width: 300px; }
+        .about-text h2 { font-size: 2rem; color: var(--secondary-color); margin-bottom: 20px; }
+        .about-text p { color: #8B7355; line-height: 1.8; margin-bottom: 15px; }
+        .about-stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-top: 30px; }
+        .stat-box { background: var(--bg-color); padding: 20px; border-radius: 12px; text-align: center; }
+        .stat-num { font-size: 2rem; font-weight: bold; color: var(--primary-color); display: block; }
+        .stat-label { font-size: 0.9rem; color: #8B7355; }
+        
+        /* ✨ 新增：关于我们图片样式 */
+        .about-image { 
+            flex: 1; 
+            min-width: 300px; 
+            height: 350px; 
+            background: linear-gradient(135deg, #E8F5E9 0%, #F1F8E9 100%); 
+            border-radius: var(--border-radius); 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            position: relative;
+        }
+        .about-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        .about-image:hover img {
+            transform: scale(1.05);
+        }
+
+        /* --- 数据闭环 --- */
+        .data-section { padding: 80px 5%; background: linear-gradient(135deg, #5D4E37 0%, #8FBC8F 100%); color: white; display: flex; justify-content: space-around; align-items: center; flex-wrap: wrap; gap: 40px; text-align: center; }
+        .data-item { flex: 1; min-width: 200px; }
+        .data-num { font-size: 3.5rem; font-weight: 800; color: var(--primary-color); display: block; line-height: 1.2; text-shadow: 0 2px 10px rgba(0,0,0,0.3); }
+        .data-label { font-size: 1.2rem; opacity: 0.9; margin-top: 10px; display: block; font-weight: 300; }
+
+        /* --- 页脚 --- */
+        footer { background: #5D4E37; color: white; padding: 40px 5%; text-align: center; }
+        .footer-links { display: flex; justify-content: center; gap: 30px; margin-bottom: 20px; flex-wrap: wrap; }
+        .footer-links a { color: #D7CCC8; transition: var(--transition); }
+        .footer-links a:hover { color: var(--primary-color); }
+        .footer-copy { color: #A8957A; font-size: 0.9rem; }
+
+        /* --- 模拟语音输入 --- */
+        .voice-input-bar {
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) scale(1);
+            background: rgba(255,255,255,0.95); backdrop-filter: blur(10px);
+            padding: 12px 25px; border-radius: 50px; box-shadow: 0 10px 40px rgba(93, 78, 55, 0.15);
+            display: flex; align-items: center; gap: 15px; z-index: 999;
+            border: 1px solid rgba(93, 78, 55, 0.05); min-width: 400px; transition: all 0.3s;
+        }
+        .mic-btn { width: 45px; height: 45px; background: var(--primary-color); border-radius: 50%; display: flex; justify-content: center; align-items: center; color: white; cursor: pointer; box-shadow: 0 4px 10px rgba(230, 126, 34, 0.4); flex-shrink: 0; }
+        .mic-btn:hover { transform: scale(1.1); }
+        .voice-text { font-size: 1rem; color: #5D4E37; flex-grow: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 500;}
+        .recording .mic-btn { background: #E74C3C; animation: pulse 1s infinite; }
+        .recording .voice-text { color: #E74C3C; font-weight: bold; }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.7); } 70% { box-shadow: 0 0 0 15px rgba(231, 76, 60, 0); } 100% { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0); } }
+
+        @media (max-width: 768px) {
+            .hero-section { flex-direction: column; padding-top: 20px; }
+            .nav-links { display: none; } 
+            .data-section { flex-direction: column; gap: 30px; }
+            .voice-input-bar { width: 90%; min-width: auto; }
+            .action-buttons { grid-template-columns: 1fr; }
+            .section-header { flex-direction: column; align-items: flex-start; gap: 10px; }
+            .about-content { flex-direction: column; }
+            .merch-header h2::after { display: none; }
+            .merch-grid { grid-template-columns: 1fr; }
+            .mascot-youyou { height: 150px; top: -20px; right: 10px; }
+            .mascot-nurse { height: 150px; right: 5%; bottom: -10px; }
+            .about-image { height: 250px; }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <!-- 顶部导航 -->
+    <header>
+        <div class="logo" onclick="window.location.href='index.html'">银发匠心</div>
+        <nav class="nav-links">
+            <a href="#home" onclick="scrollToSection('home')">元宇宙展厅</a>
+            <a href="#portfolio" onclick="scrollToSection('portfolio')">作品集</a>
+            <a href="#merchandise" onclick="scrollToSection('merchandise')">文创衍生</a>
+            <a href="#services" onclick="scrollToSection('services')">便民中心</a>
+            <a href="#about" onclick="scrollToSection('about')">关于我们</a>
+        </nav>
+        <div class="header-actions">
+            <div class="role-switch-container">
+                <div class="role-display" onclick="toggleRoleMenu()">
+                    <i class="fas fa-user-circle"></i>
+                    <span id="current-role">👤 游客模式</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="role-menu" id="role-menu">
+                    <div class="role-item" onclick="switchRole('visitor')">
+                        <span class="role-icon">👤</span>
+                        <span class="role-name">游客/消费者</span>
+                        <span class="role-desc">浏览购买</span>
+                    </div>
+                    <div class="role-item" onclick="switchRole('creator')">
+                        <span class="role-icon">👴</span>
+                        <span class="role-name">老年创作者</span>
+                        <span class="role-desc">上传作品</span>
+                    </div>
+                    <div class="role-item" onclick="switchRole('volunteer')">
+                        <span class="role-icon">❤️</span>
+                        <span class="role-name">志愿者</span>
+                        <span class="role-desc">接单服务</span>
+                    </div>
+                    <div class="role-item" onclick="switchRole('enterprise')">
+                        <span class="role-icon">🏢</span>
+                        <span class="role-name">企业入驻</span>
+                        <span class="role-desc">批量采购</span>
+                    </div>
+                </div>
+            </div>
+            <div class="demo-switch" onclick="toggleElderlyMode()" title="点击体验适老化界面">
+                <i class="fas fa-eye"></i> 
+                <span id="mode-text">切换适老模式</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- 首屏：元宇宙展厅 -->
+    <section id="home" class="hero-section">
+        <div class="showcase-3d">
+            <div class="model-placeholder">
+                <div>
+                    <i class="fas fa-cube" style="font-size: 5rem; color: var(--secondary-color); margin-bottom: 15px;"></i>
+                    <h3 style="color: var(--text-color);">3D 作品展示区</h3>
+                    <p style="margin-top: 10px; color: #8B7355; font-size: 0.9rem;">支持 360°旋转 / 缩放细节 / 语音讲解</p>
+                    <div style="margin-top: 15px; font-size: 0.8rem; color: #A8957A;">(演示用占位符)</div>
+                </div>
+            </div>
+            <div style="position: absolute; top: 25%; left: 15%; background: white; padding: 12px 18px; border-radius: 15px; box-shadow: 0 5px 15px rgba(93, 78, 55, 0.1); max-width: 200px; border: 1px solid #F0E6D5;">
+                <i class="fas fa-volume-up" style="color: var(--primary-color); margin-right: 5px;"></i> 
+                <span style="font-size: 0.9rem; color: #5D4E37;">"这是我用老松木刻的，寓意健康长寿..."</span>
+            </div>
+        </div>
+
+        <div class="control-panel">
+            <!-- 🦥 IP 形象：悠悠 (格子衫) - 产品卡片右上角推荐 -->
+            <img src="/static/2.png" alt="悠悠" class="mascot-youyou" onerror="this.style.display='none'">
+            
+            <div class="product-info">
+                <div style="display: flex; justify-content: space-between; align-items: start;">
+                    <h2>手工木雕·松鹤延年</h2>
+                    <span style="background: #FFF8E1; color: #8B7355; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: bold;">热销中</span>
+                </div>
+                <p style="color: #8B7355; margin: 10px 0; font-size: 0.95rem;">
+                    <i class="fas fa-user-circle"></i> 作者：李奶奶 (78 岁) &nbsp;|&nbsp; 
+                    <i class="fas fa-clock"></i> 创作时长：30 小时
+                </p>
+                <div class="ai-estimate" id="main-ai-estimate">
+                    <i class="fas fa-robot"></i> AI 智能估价：¥280 - ¥320
+                </div>
+                <span class="price-tag">售价：¥299.00</span>
+                <div class="trust-badges">
+                    <strong><i class="fas fa-shield-alt"></i> 平台信誉保障</strong>
+                    <div class="badge-item">✅ 实名认证</div>
+                    <div class="badge-item">✅ 资金托管</div>
+                    <div class="badge-item">✅ 志愿者验货</div>
+                </div>
+                <div class="action-buttons">
+                    <button class="btn btn-primary" id="main-action-btn"><i class="fas fa-shopping-cart"></i> 立即购买</button>
+                    <button class="btn btn-secondary"><i class="fas fa-heart"></i> 点赞支持</button>
+                    <button class="btn btn-secondary"><i class="fas fa-comment-dots"></i> 留言</button>
+                    <button class="btn btn-secondary"><i class="fas fa-video"></i> 视频</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 作品集板块 -->
+    <section id="portfolio" class="portfolio-section">
+        <div class="section-header">
+            <div class="section-title-group">
+                <h2>银发作品集</h2>
+                <p>发现每一位老人的独特匠心，让技艺传承更有温度</p>
+            </div>
+            <div class="view-all" onclick="alert('演示版本：点击可跳转至完整作品集页面')">
+                查看全部作品 <i class="fas fa-arrow-right"></i>
+            </div>
+        </div>
+        <div class="portfolio-grid">
+            <div class="work-card">
+                <div class="work-img-box"><div class="img-placeholder"><i class="fas fa-pen-fancy"></i><span style="font-size:1rem; margin-top:10px;">书法作品</span></div></div>
+                <div class="work-info">
+                    <span class="work-category">书法艺术</span>
+                    <h3 class="work-title">行书·沁园春·雪</h3>
+                    <div class="author-row">
+                        <div class="author-avatar" style="background: var(--light-bg);">张</div>
+                        <div><div class="author-name">张爷爷</div><div class="author-age">82 岁 · 退休教师</div></div>
+                        <i class="fas fa-hat-cowboy" style="color: var(--primary-color);"></i>
+                    </div>
+                    <div class="work-footer">
+                        <div><span class="work-price">¥168</span><span class="ai-tag">AI 估</span></div>
+                        <button class="btn btn-primary btn-sm"><i class="fas fa-heart"></i></button>
+                    </div>
+                </div>
+            </div>
+            <div class="work-card">
+                <div class="work-img-box"><div class="img-placeholder" style="background: linear-gradient(45deg, #FAD0C4, #FFD1FF); color: #fff;"><i class="fas fa-tshirt"></i><span style="font-size:1rem; margin-top:10px;">苏绣作品</span></div></div>
+                <div class="work-info">
+                    <span class="work-category">传统刺绣</span>
+                    <h3 class="work-title">双面绣·牡丹富贵</h3>
+                    <div class="author-row">
+                        <div class="author-avatar" style="background: #E91E63;">王</div>
+                        <div><div class="author-name">王奶奶</div><div class="author-age">75 岁 · 非遗传承人</div></div>
+                        <i class="fas fa-star" style="color: gold;"></i>
+                    </div>
+                    <div class="work-footer">
+                        <div><span class="work-price">¥520</span><span class="ai-tag">AI 估</span></div>
+                        <button class="btn btn-primary btn-sm"><i class="fas fa-heart"></i></button>
+                    </div>
+                </div>
+            </div>
+            <div class="work-card">
+                <div class="work-img-box"><div class="img-placeholder" style="background: linear-gradient(45deg, #FF9A9E, #FECFEF); color: #fff;"><i class="fas fa-cut"></i><span style="font-size:1rem; margin-top:10px;">剪纸艺术</span></div></div>
+                <div class="work-info">
+                    <span class="work-category">民间剪纸</span>
+                    <h3 class="work-title">窗花·十二生肖系列</h3>
+                    <div class="author-row">
+                        <div class="author-avatar" style="background: #FF9800;">刘</div>
+                        <div><div class="author-name">刘奶奶</div><div class="author-age">69 岁 · 社区达人</div></div>
+                        <i class="fas fa-medal" style="color: var(--secondary-color);"></i>
+                    </div>
+                    <div class="work-footer">
+                        <div><span class="work-price">¥88</span><span class="ai-tag">AI 估</span></div>
+                        <button class="btn btn-primary btn-sm"><i class="fas fa-heart"></i></button>
+                    </div>
+                </div>
+            </div>
+            <div class="work-card">
+                <div class="work-img-box"><div class="img-placeholder" style="background: linear-gradient(45deg, #A18CD1, #FBC2EB); color: #fff;"><i class="fas fa-basket-shopping"></i><span style="font-size:1rem; margin-top:10px;">竹编工艺</span></div></div>
+                <div class="work-info">
+                    <span class="work-category">手工竹编</span>
+                    <h3 class="work-title">复古竹篮·手提款</h3>
+                    <div class="author-row">
+                        <div class="author-avatar" style="background: #4CAF50;">陈</div>
+                        <div><div class="author-name">陈爷爷</div><div class="author-age">85 岁 · 老手艺人</div></div>
+                        <i class="fas fa-thumbs-up" style="color: var(--primary-color);"></i>
+                    </div>
+                    <div class="work-footer">
+                        <div><span class="work-price">¥120</span><span class="ai-tag">AI 估</span></div>
+                        <button class="btn btn-primary btn-sm"><i class="fas fa-heart"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 文创衍生产品板块 -->
+    <section id="merchandise" class="merchandise-section">
+        <div class="merch-header">
+            <h2>IP 文创市集</h2>
+            <p>基于本网站三大 IP 形象设计的原创周边</p>
+            <div class="merch-tags">
+                <span class="merch-tag">🦥 官方授权</span>
+                <span class="merch-tag">🎨 原创设计</span>
+                <span class="merch-tag">🎁 精美包装</span>
+                <span class="merch-tag">🚚 全国包邮</span>
+            </div>
+        </div>
+
+        <div class="merch-grid">
+            <!-- 产品卡片 1: 明信片 -->
+            <div class="merch-card">
+                <span class="merch-badge hot">🔥 热销</span>
+                <div class="merch-img-box">
+                    <img src="/static/6.png" alt="明信片套装" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+                    <div class="merch-placeholder" style="display:none;">
+                        <i class="fas fa-envelope-open-text"></i>
+                        <span>明信片</span>
+                    </div>
+                </div>
+                <div class="merch-info">
+                    <span class="merch-category">📮明信片系列</span>
+                    <h3 class="merch-title">慢生活·树懒三人行明信片</h3>
+                    <p class="merch-desc">在快节奏的世界里，看我们的树懒如何慢下来享受生活。一套包含三种性格色彩的视觉盛宴，定格每一个温暖动人的时刻。</p>
+                    <div class="merch-footer">
+                        <div class="merch-price">¥39.90 <small>¥59.90</small></div>
+                        <div class="merch-actions">
+                            <button class="merch-btn merch-btn-secondary" onclick="addToCart('明信片')"><i class="fas fa-shopping-cart"></i></button>
+                            <button class="merch-btn merch-btn-primary" onclick="buyNow('明信片')">立即购买</button>
+                        </div>
+                    </div>
+                    <div class="merch-stats">
+                        <span class="merch-stat"><i class="fas fa-star"></i> 4.9</span>
+                        <span class="merch-stat"><i class="fas fa-shopping-bag"></i> 已售 2341</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 产品卡片 2: 钥匙扣 -->
+            <div class="merch-card">
+                <span class="merch-badge new">✨ 新品</span>
+                <div class="merch-img-box">
+                    <img src="/static/7.png" alt="钥匙扣" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+                    <div class="merch-placeholder" style="display:none;">
+                        <i class="fas fa-key"></i>
+                        <span>钥匙扣</span>
+                    </div>
+                </div>
+                <div class="merch-info">
+                    <span class="merch-category">🔑 钥匙扣系列</span>
+                    <h3 class="merch-title">树懒小分队·Q 版挂饰钥匙扣</h3>
+                    <p class="merch-desc">把可爱的树懒家族带回家！三个 IP 形象化身迷你挂件，色彩鲜艳造型立体。不仅实用防丢，更是日常穿搭中的吸睛亮点。</p>
+                    <div class="merch-footer">
+                        <div class="merch-price">¥29.90 <small>¥39.90</small></div>
+                        <div class="merch-actions">
+                            <button class="merch-btn merch-btn-secondary" onclick="addToCart('悠悠钥匙扣')"><i class="fas fa-shopping-cart"></i></button>
+                            <button class="merch-btn merch-btn-primary" onclick="buyNow('悠悠钥匙扣')">立即购买</button>
+                        </div>
+                    </div>
+                    <div class="merch-stats">
+                        <span class="merch-stat"><i class="fas fa-star"></i> 4.8</span>
+                        <span class="merch-stat"><i class="fas fa-shopping-bag"></i> 已售 1567</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 产品卡片 3: 贴纸 -->
+            <div class="merch-card">
+                <span class="merch-badge">💝 推荐</span>
+                <div class="merch-img-box">
+                    <img src="/static/5.png" alt="贴纸" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+                    <div class="merch-placeholder" style="display:none;">
+                        <i class="fas fa-sticky-note"></i>
+                        <span>贴纸</span>
+                    </div>
+                </div>
+                <div class="merch-info">
+                    <span class="merch-category">⚕️ 贴纸系列</span>
+                    <h3 class="merch-title">百变树懒·全场景装饰贴纸套装</h3>
+                    <p class="merch-desc">饱和度色彩还原 IP 本色。一套集齐三个角色的所有萌态，模切工艺方便撕取，让每一次记录都充满童趣与温暖。</p>
+                    <div class="merch-footer">
+                        <div class="merch-price">¥19.90 <small>¥29.90</small></div>
+                        <div class="merch-actions">
+                            <button class="merch-btn merch-btn-secondary" onclick="addToCart('贴纸')"><i class="fas fa-shopping-cart"></i></button>
+                            <button class="merch-btn merch-btn-primary" onclick="buyNow('贴纸')">立即购买</button>
+                        </div>
+                    </div>
+                    <div class="merch-stats">
+                        <span class="merch-stat"><i class="fas fa-star"></i> 4.7</span>
+                        <span class="merch-stat"><i class="fas fa-shopping-bag"></i> 已售 3892</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 便民服务矩阵 -->
+    <section id="services" class="service-section">
+        <h2 class="section-title-center">便民服务站</h2>
+        <div class="service-grid">
+            <div class="service-card">
+                <div><span class="service-icon">🩺</span><h3>健康陪测</h3><p class="service-desc">专业志愿者陪同体检，协助挂号、取药，一站式解决就医难题。</p></div>
+                <div><div class="service-status">本社区还需 2 人成团</div><button class="btn btn-primary" style="width: 100%;">立即预约</button></div>
+            </div>
+            <div class="service-card">
+                <div><span class="service-icon">❤️</span><h3>情感陪伴</h3><p class="service-desc">提供线上视频聊天或线下上门陪伴服务，倾听心声，消除孤独感。</p></div>
+                <div><div class="service-status">预计响应时间 5 分钟</div><button class="btn btn-primary" style="width: 100%;">匹配志愿者</button></div>
+            </div>
+            <div class="service-card">
+                <div><span class="service-icon">🗺️</span><h3>安全导航</h3><p class="service-desc">志愿者全程陪同出行，配合实时语音播报，确保老人出行安全。</p></div>
+                <div><div class="service-status">当前可用志愿者 3 名</div><button class="btn btn-primary" style="width: 100%;">呼叫陪行</button></div>
+            </div>
+        </div>
+        
+        <!-- 🦥 IP 形象：医护树懒 (白大褂) - 便民服务右下角守护 -->
+        <img src="/static/3.png" alt="医护树懒" class="mascot-nurse" onerror="this.style.display='none'">
+    </section>
+
+    <!-- 关于我们 -->
+    <section id="about" class="about-section">
+        <div class="about-content">
+            <div class="about-text">
+                <h2>关于银发匠心</h2>
+                <p>"银发匠心"是专注老年人技能价值变现的综合性电商平台，响应国家银发经济战略与老年人情感陪伴需求。平台以老年书画、手工艺等创作为核心，构建"适老化创作展示 - 社交化价值变现 - 社区化便民服务"闭环。</p>
+                <p>通过极简语音交互、一键上传功能降低技术门槛，配套数字素养培训破解老年数字鸿沟；建立实名认证、作品溯源、第三方担保的信誉体系保障交易安全。</p>
+                <div class="about-stats">
+                    <div class="stat-box"><span class="stat-num">10+</span><span class="stat-label">合作社区</span></div>
+                    <div class="stat-box"><span class="stat-num">500+</span><span class="stat-label">入驻老人</span></div>
+                    <div class="stat-box"><span class="stat-num">1000+</span><span class="stat-label">志愿者</span></div>
+                    <div class="stat-box"><span class="stat-num">98%</span><span class="stat-label">用户满意度</span></div>
+                </div>
+            </div>
+            <!-- ✨ 新增：图片 4 (团队合影/办公场景) -->
+            <div class="about-image">
+                <img src="/static/4.jpg" alt="团队合影" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+                <div style="display:none; width:100%; height:100%; background:linear-gradient(135deg, #E8F5E9 0%, #F1F8E9 100%); justify-content:center; align-items:center; color:#8B7355; text-align:center; flex-direction:column;">
+                    <i class="fas fa-users" style="font-size: 5rem; color: var(--secondary-color); margin-bottom: 20px;"></i>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 数据闭环 -->
+    <section class="data-section">
+        <div class="data-item"><span class="data-num" data-target="1280">0</span><span class="data-label">累计帮助老人</span></div>
+        <div class="data-item"><span class="data-num" data-target="56000">0</span><span class="data-label">作品成交总额 (元)</span></div>
+        <div class="data-item"><span class="data-num" data-target="3400">0</span><span class="data-label">志愿者服务时长 (h)</span></div>
+        <div class="data-item"><span class="data-num" data-target="890">0</span><span class="data-label">积分兑换次数</span></div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer>
+        <div class="footer-links">
+            <a href="#home">首页</a>
+            <a href="#portfolio">作品集</a>
+            <a href="#merchandise">文创市集</a>
+            <a href="#services">便民服务</a>
+            <a href="#about">关于我们</a>
+            <a href="#">隐私政策</a>
+            <a href="#">联系我们</a>
+        </div>
+        <div class="footer-copy">
+            <p>© 2026 银发匠心平台 | </p>
+            <p style="margin-top: 10px; font-size: 0.8rem;">本网站已进行适老化改造，符合通用设计规范</p>
+        </div>
+    </footer>
+
+    <div style="height: 50px;"></div>
+
+    <!-- 模拟语音输入悬浮条 -->
+    <div class="voice-input-bar" id="voiceBar">
+        <div class="mic-btn" onclick="simulateVoice()"><i class="fas fa-microphone"></i></div>
+        <div class="voice-text" id="voiceText">点击麦克风，对系统说："我想买这个木雕"</div>
+    </div>
+
+    <script>
+        function scrollToSection(sectionId) {
+            const section = document.getElementById(sectionId);
+            if (section) { section.scrollIntoView({ behavior: 'smooth' }); }
+        }
+
+        function toggleElderlyMode() {
+            const body = document.body;
+            const modeText = document.getElementById('mode-text');
+            const voiceBar = document.getElementById('voiceBar');
+            body.classList.toggle('elderly-mode');
+            if (body.classList.contains('elderly-mode')) {
+                modeText.innerText = "退出适老模式";
+                voiceBar.style.transform = "translateX(-50%) scale(1.2)";
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                alert("【演示提示】\n已切换至【适老化模式】：\n1. 字体放大至 24pt\n2. 色彩对比度增强\n3. 布局简化，易于操作");
+            } else {
+                modeText.innerText = "切换适老模式";
+                voiceBar.style.transform = "translateX(-50%) scale(1)";
+            }
+        }
+
+        function simulateVoice() {
+            const voiceBar = document.getElementById('voiceBar');
+            const voiceText = document.getElementById('voiceText');
+            const originalText = voiceText.innerText;
+            voiceBar.classList.add('recording');
+            voiceText.innerText = "正在聆听您的指令...";
+            setTimeout(() => {
+                voiceBar.classList.remove('recording');
+                voiceText.innerText = "识别结果：'我想看看文创产品'";
+                setTimeout(() => {
+                    voiceText.innerText = "系统回复：'已为您找到文创衍生板块，正在跳转...'";
+                    voiceText.style.color = "#27ae60";
+                    scrollToSection('merchandise');
+                    setTimeout(() => {
+                        voiceText.innerText = originalText;
+                        voiceText.style.color = "#5D4E37";
+                    }, 3000);
+                }, 1500);
+            }, 2000);
+        }
+
+        const counters = document.querySelectorAll('.data-num');
+        const speed = 200;
+        const animateCounters = () => {
+            counters.forEach(counter => {
+                const updateCount = () => {
+                    const target = +counter.getAttribute('data-target');
+                    const count = +counter.innerText.replace(/,/g, '');
+                    const inc = target / speed;
+                    if (count < target) {
+                        counter.innerText = Math.ceil(count + inc).toLocaleString();
+                        setTimeout(updateCount, 20);
+                    } else { counter.innerText = target.toLocaleString(); }
+                };
+                updateCount();
+            });
+        };
+        let animated = false;
+        window.onscroll = function() {
+            const section = document.querySelector('.data-section');
+            if (!section) return;
+            const sectionPos = section.getBoundingClientRect().top;
+            const screenPos = window.innerHeight / 1.2;
+            if(sectionPos < screenPos && !animated){ animateCounters(); animated = true; }
+        };
+
+        window.addEventListener('scroll', function() {
+            const sections = ['home', 'portfolio', 'merchandise', 'services', 'about'];
+            const navLinks = document.querySelectorAll('.nav-links a');
+            let current = '';
+            sections.forEach(sectionId => {
+                const section = document.getElementById(sectionId);
+                if (section) {
+                    const sectionTop = section.offsetTop;
+                    if (window.pageYOffset >= sectionTop - 150) { current = sectionId; }
+                }
+            });
+            navLinks.forEach(link => {
+                link.style.color = '';
+                link.classList.remove('active-link');
+                if (link.getAttribute('href') === '#' + current) {
+                    link.style.color = 'var(--primary-color)';
+                    link.classList.add('active-link');
+                }
+            });
+        });
+
+        let currentRole = 'visitor';
+        function toggleRoleMenu() {
+            const menu = document.getElementById('role-menu');
+            const display = document.querySelector('.role-display');
+            menu.classList.toggle('show');
+            display.classList.toggle('active');
+        }
+        function switchRole(role) {
+            currentRole = role;
+            const roleDisplay = document.getElementById('current-role');
+            const roleItems = document.querySelectorAll('.role-item');
+            const roleConfig = {
+                'visitor': { icon: '👤', name: '游客模式', tip: '可浏览作品、购买、打赏' },
+                'creator': { icon: '👴', name: '创作者模式', tip: '可上传作品、查看收益、参加培训' },
+                'volunteer': { icon: '❤️', name: '志愿者模式', tip: '可接单服务、查看排班、兑换积分' },
+                'enterprise': { icon: '🏢', name: '企业模式', tip: '可批量采购、合作洽谈、定制服务' }
+            };
+            roleDisplay.innerHTML = `${roleConfig[role].icon} ${roleConfig[role].name}`;
+            roleItems.forEach((item, index) => {
+                item.classList.remove('active');
+                if (index === Object.keys(roleConfig).indexOf(role)) { item.classList.add('active'); }
+            });
+            document.getElementById('role-menu').classList.remove('show');
+            document.querySelector('.role-display').classList.remove('active');
+            alert(`已切换至【${roleConfig[role].name}】\n${roleConfig[role].tip}`);
+            adjustPageForRole(role);
+        }
+        function adjustPageForRole(role) {
+            const buyButtons = document.querySelectorAll('#main-action-btn');
+            const uploadHint = document.querySelector('#main-ai-estimate');
+            if (role === 'creator') {
+                if (uploadHint) {
+                    uploadHint.innerHTML = '<i class="fas fa-upload"></i> 点击上传您的作品';
+                    uploadHint.style.background = '#FFF8E1';
+                    uploadHint.style.borderLeftColor = '#FFC107';
+                }
+            } else if (role === 'volunteer') {
+                buyButtons.forEach(btn => {
+                    if (btn && btn.innerHTML.includes('购买')) {
+                        btn.innerHTML = '<i class="fas fa-hand-holding-heart"></i> 申请服务';
+                    }
+                });
+            } else if (role === 'enterprise') {
+                buyButtons.forEach(btn => {
+                    if (btn && btn.innerHTML.includes('购买')) {
+                        btn.innerHTML = '<i class="fas fa-boxes"></i> 批量询价';
+                    }
+                });
+            } else {
+                if (uploadHint) {
+                    uploadHint.innerHTML = '<i class="fas fa-robot"></i> AI 智能估价：¥280 - ¥320';
+                    uploadHint.style.background = '#F5E6D3';
+                    uploadHint.style.borderLeftColor = '#8FBC8F';
+                }
+            }
+        }
+        document.addEventListener('click', function(event) {
+            const roleContainer = document.querySelector('.role-switch-container');
+            if (roleContainer && !roleContainer.contains(event.target)) {
+                document.getElementById('role-menu')?.classList.remove('show');
+                document.querySelector('.role-display')?.classList.remove('active');
+            }
+        });
+
+        let cart = [];
+        function addToCart(productName) {
+            cart.push(productName);
+            alert(`✅ 已成功加入购物车\n📦 ${productName}\n\n当前购物车共有 ${cart.length} 件商品`);
+        }
+        function buyNow(productName) {
+            const confirmBuy = confirm(`🛒 确认购买\n\n商品：${productName}\n\n点击"确定"继续支付流程`);
+            if (confirmBuy) {
+                alert(`🎉 购买成功！\n\n感谢您的支持，每一笔购买都将直接帮助到创作这些艺术作品的老人们！\n\n订单详情将发送至您的邮箱。`);
+            }
+        }
+    </script>
+</body>
+</html>
